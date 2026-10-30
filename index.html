@@ -22,11 +22,7 @@
             color: #FFFFFF;
             font-family: 'Georgia', 'Times New Roman', serif;
             line-height: 1.8;
-            /* ELIMINADO: overflow: hidden */
-            /* ELIMINADO: display: flex */
-            /* ELIMINADO: min-height: 100vh */
-            /* ELIMINADO: justify-content: center */
-            /* ELIMINADO: align-items: center */
+            min-height: 100vh;
             position: relative;
         }
 
@@ -43,22 +39,28 @@
             z-index: 1;
         }
 
-        /* ===== SECCIÓN 1: HERO (Pantalla inicial) ===== */
-        .hero {
+        /* Container principal - centrado al inicio, fluye hacia abajo */
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 2rem;
             position: relative;
             z-index: 2;
+            transition: justify-content 1s ease;
         }
 
-        .hero-content {
-            max-width: 700px;
+        .container.flow {
+            justify-content: flex-start;
+            padding-top: 6rem;
         }
 
+        /* Párrafo inicial */
         .quote {
             font-size: 1.15rem;
             line-height: 2;
@@ -69,10 +71,13 @@
             letter-spacing: 0.02em;
         }
 
+        /* Campo de input - dormido inicialmente */
         .input-container {
             opacity: 0;
             transition: opacity 3s ease;
             margin-top: 2rem;
+            width: 100%;
+            max-width: 500px;
         }
 
         .input-container.awake {
@@ -110,6 +115,7 @@
             font-style: italic;
         }
 
+        /* Cursor que parpadea */
         .cursor {
             display: none;
             width: 2px;
@@ -124,24 +130,12 @@
             display: block;
         }
 
-        /* ===== SECCIÓN 2: CONVERSACIÓN ===== */
-        .conversation-section {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 4rem 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .conversation-container {
-            max-width: 700px;
-            width: 100%;
-        }
-
+        /* Área de conversación - justo debajo del input */
         .conversation {
+            margin-top: 3rem;
             text-align: left;
+            width: 100%;
+            max-width: 600px;
         }
 
         .message {
@@ -164,53 +158,21 @@
             border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ===== SECCIÓN 3: FRASE FINAL ===== */
-        .final-section {
-            min-height: 50vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-            z-index: 2;
-        }
-
+        /* Frase final */
         .final-phrase {
-            font-size: 1.5rem;
+            display: none;
+            margin-top: 4rem;
+            font-size: 1.2rem;
             opacity: 0;
             letter-spacing: 0.1em;
             text-transform: uppercase;
             line-height: 2;
+            padding: 2rem 0;
         }
 
         .final-phrase.visible {
+            display: block;
             animation: fadeInSlow 4s ease forwards;
-        }
-
-        /* ===== INDICADOR DE SCROLL ===== */
-        .scroll-indicator {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.8rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            opacity: 0;
-            transition: opacity 1s ease;
-            z-index: 3;
-            pointer-events: none;
-        }
-
-        .scroll-indicator.visible {
-            opacity: 1;
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-indicator.hidden {
-            opacity: 0;
         }
 
         /* Animaciones */
@@ -229,14 +191,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
         /* Responsive */
         @media (max-width: 600px) {
-            .hero-content {
+            .container {
                 padding: 1.5rem;
             }
             .quote {
@@ -246,7 +203,7 @@
                 font-size: 1rem;
             }
             .final-phrase {
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
         }
 
@@ -273,45 +230,34 @@
     </style>
 </head>
 <body>
-    <!-- ===== SECCIÓN 1: HERO ===== -->
-    <section class="hero" id="hero">
-        <div class="hero-content">
-            <div class="quote">
-                Will is not a desire. It is the recognition of one's own nature and the execution of its potential.
-            </div>
-
-            <div class="input-container" id="inputContainer">
-                <div class="input-label" id="inputLabel"></div>
-                <input 
-                    type="text" 
-                    id="userInput" 
-                    placeholder="" 
-                    autocomplete="off"
-                    spellcheck="false"
-                >
-            </div>
-
-            <div class="cursor" id="cursor"></div>
+    <div class="container" id="container">
+        <!-- Frase inicial del manuscrito -->
+        <div class="quote">
+            Will is not a desire. It is the recognition of one's own nature and the execution of its potential.
         </div>
-    </section>
 
-    <!-- ===== SECCIÓN 2: CONVERSACIÓN ===== -->
-    <section class="conversation-section" id="conversationSection">
-        <div class="conversation-container">
-            <div class="conversation" id="conversation"></div>
+        <!-- Campo de input (dormido al inicio) -->
+        <div class="input-container" id="inputContainer">
+            <div class="input-label" id="inputLabel"></div>
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="" 
+                autocomplete="off"
+                spellcheck="false"
+            >
         </div>
-    </section>
 
-    <!-- ===== SECCIÓN 3: FRASE FINAL ===== -->
-    <section class="final-section" id="finalSection">
+        <!-- Cursor que parpadea -->
+        <div class="cursor" id="cursor"></div>
+
+        <!-- Área de conversación -->
+        <div class="conversation" id="conversation"></div>
+
+        <!-- Frase final -->
         <div class="final-phrase" id="finalPhrase">
             Before asking,<br>notice who asks.
         </div>
-    </section>
-
-    <!-- ===== INDICADOR DE SCROLL ===== -->
-    <div class="scroll-indicator" id="scrollIndicator">
-        Scroll ↓
     </div>
 
     <script>
@@ -320,20 +266,19 @@
         // Solo hace preguntas
         // ============================================
 
+        const container = document.getElementById('container');
         const inputContainer = document.getElementById('inputContainer');
         const inputLabel = document.getElementById('inputLabel');
         const userInput = document.getElementById('userInput');
         const cursor = document.getElementById('cursor');
         const conversation = document.getElementById('conversation');
         const finalPhrase = document.getElementById('finalPhrase');
-        const scrollIndicator = document.getElementById('scrollIndicator');
-        const conversationSection = document.getElementById('conversationSection');
 
-        // Estado inicial
+        // Estado inicial: la página está dormida
         let isAwake = false;
         let interactionCount = 0;
 
-        // Las respuestas de AIAMME (siempre preguntas)
+        // Las respuestas de AIAMME (siempre preguntas, nunca respuestas)
         const responses = [
             "Fear is not your enemy. It is proof that what you are about to do matters. Tell me: what do you see in the data that others don't see?",
             "If the auditor asked you why you classified the payments this way and not the other, what would you tell him?",
@@ -365,18 +310,13 @@
                     setTimeout(() => {
                         inputContainer.classList.add('awake');
                         userInput.focus();
-                        
-                        // Mostrar indicador de scroll después de que el input está activo
-                        setTimeout(() => {
-                            scrollIndicator.classList.add('visible');
-                        }, 2000);
                     }, 1000);
                 });
             }, 2000);
         }
 
         // ============================================
-        // Efecto de escritura
+        // Efecto de escritura con scroll suave
         // ============================================
 
         function typeText(element, text, callback) {
@@ -387,6 +327,9 @@
                 if (index < text.length) {
                     element.innerHTML += text.charAt(index);
                     index++;
+                    
+                    // Scroll suave mientras se escribe
+                    smoothScrollToBottom();
                 } else {
                     clearInterval(interval);
                     if (callback) callback();
@@ -395,12 +338,54 @@
         }
 
         // ============================================
+        // Scroll suave y natural
+        // ============================================
+
+        function smoothScrollToBottom() {
+            // Scroll suave usando requestAnimationFrame
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            const targetScroll = document.body.scrollHeight - window.innerHeight;
+            
+            if (targetScroll > currentScroll) {
+                window.scrollTo({
+                    top: targetScroll,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        function smoothScrollToElement(element, duration = 2000) {
+            const start = window.pageYOffset;
+            const target = element.offsetTop - (window.innerHeight - element.offsetHeight) / 2;
+            const distance = target - start;
+            const startTime = performance.now();
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function (ease-in-out)
+                const easeProgress = progress < 0.5 
+                    ? 2 * progress * progress 
+                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                
+                window.scrollTo(0, start + distance * easeProgress);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // ============================================
         // Respuesta de AIAMME
         // ============================================
 
         function aiammeRespond(userMessage) {
-            // Ocultar indicador de scroll al primer mensaje
-            scrollIndicator.classList.add('hidden');
+            // Cambiar el container a modo flujo (no centrado)
+            container.classList.add('flow');
 
             // Crear mensaje del usuario
             const userMsg = document.createElement('div');
@@ -410,6 +395,11 @@
 
             // Limpiar input
             userInput.value = '';
+
+            // Scroll suave al nuevo mensaje
+            setTimeout(() => {
+                smoothScrollToElement(userMsg, 1500);
+            }, 100);
 
             // Determinar respuesta
             let response;
@@ -433,19 +423,11 @@
                         setTimeout(() => {
                             finalPhrase.classList.add('visible');
                             
-                            // Scroll suave a la frase final
+                            // Scroll suave y lento a la frase final (3 segundos)
                             setTimeout(() => {
-                                document.getElementById('finalSection').scrollIntoView({ 
-                                    behavior: 'smooth' 
-                                });
-                            }, 1000);
+                                smoothScrollToElement(finalPhrase, 3000);
+                            }, 500);
                         }, 2000);
-                    } else {
-                        // Scroll suave a la conversación
-                        conversationSection.scrollIntoView({ 
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
                     }
                 });
             }, 1500);
@@ -464,7 +446,7 @@
             }
         }
 
-        // Detectar actividad del usuario
+        // Detectar cualquier actividad del usuario
         document.addEventListener('mousemove', triggerWakeUp);
         document.addEventListener('click', triggerWakeUp);
         document.addEventListener('keydown', triggerWakeUp);
@@ -480,20 +462,13 @@
             }
         });
 
-        // Ocultar indicador de scroll cuando el usuario hace scroll
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                scrollIndicator.classList.add('hidden');
-            }
-        });
-
         // Prevenir copiar/pegar
         document.addEventListener('copy', (e) => e.preventDefault());
         document.addEventListener('paste', (e) => e.preventDefault());
         document.addEventListener('contextmenu', (e) => e.preventDefault());
 
         // ============================================
-        // Mensaje en consola
+        // Mensaje en consola para curiosos
         // ============================================
         console.log('%cAIAMME', 'color: #FFD700; font-size: 24px; font-family: Georgia, serif;');
         console.log('%cBefore asking, notice who asks.', 'color: #FFFFFF; font-size: 14px; font-family: Georgia, serif; font-style: italic;');
