@@ -3,66 +3,438 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIAMME.COM</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>AIAMME</title>
+    <meta name="description" content="Will is not a desire. It is the recognition of one's own nature and the execution of its potential.">
+    <meta name="robots" content="noindex, nofollow">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #ffffff;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: 'Georgia', 'Times New Roman', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             text-align: center;
+            overflow: hidden;
+            position: relative;
         }
+
+        /* Textura sutil de papel antiguo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.02"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .container {
-            max-width: 800px;
-            padding: 40px;
+            max-width: 700px;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
         }
-        h1 {
-            font-size: 4.5rem;
-            font-weight: 300;
-            letter-spacing: 0.05em;
-            margin: 0;
-            line-height: 1.1;
+
+        /* Párrafo inicial */
+        .quote {
+            font-size: 1.15rem;
+            line-height: 2;
+            opacity: 0;
+            animation: fadeInSlow 4s ease forwards;
+            margin-bottom: 3rem;
+            font-style: italic;
+            letter-spacing: 0.02em;
         }
-        .tagline {
+
+        /* Campo de input - dormido inicialmente */
+        .input-container {
+            opacity: 0;
+            transition: opacity 3s ease;
+            margin-top: 2rem;
+        }
+
+        .input-container.awake {
+            opacity: 1;
+        }
+
+        .input-label {
             font-size: 1.1rem;
-            font-weight: 400;
-            margin-top: 30px;
-            letter-spacing: 0.15em;
-            color: #b0b0b0;
+            margin-bottom: 1.5rem;
+            opacity: 0.7;
+            letter-spacing: 0.03em;
         }
-        .button {
-            display: inline-block;
-            background-color: transparent;
-            color: #ffffff;
-            padding: 15px 40px;
-            text-decoration: none;
-            border: 1px solid #ffffff;
-            border-radius: 50px;
-            font-weight: 400;
-            font-size: 0.9rem;
+
+        input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: #FFFFFF;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 1.1rem;
+            padding: 0.5rem;
+            width: 100%;
+            text-align: center;
+            outline: none;
+            letter-spacing: 0.02em;
+        }
+
+        input:focus {
+            border-bottom-color: rgba(255, 215, 0, 0.5);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-style: italic;
+        }
+
+        /* Cursor que parpadea */
+        .cursor {
+            display: none;
+            width: 2px;
+            height: 1.2rem;
+            background-color: #FFD700;
+            animation: blink 1.2s infinite;
+            margin: 0 auto;
+            margin-top: 1rem;
+        }
+
+        .cursor.active {
+            display: block;
+        }
+
+        /* Área de conversación */
+        .conversation {
+            margin-top: 2rem;
+            text-align: left;
+            min-height: 200px;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeInMessage 2s ease forwards;
+        }
+
+        .message.user {
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .message.aiamme {
+            color: #FFFFFF;
+            padding-left: 1rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Frase final */
+        .final-phrase {
+            display: none;
+            margin-top: 3rem;
+            font-size: 1rem;
+            opacity: 0.5;
             letter-spacing: 0.1em;
-            margin-top: 60px;
-            transition: all 0.4s ease;
+            text-transform: uppercase;
         }
-        .button:hover {
-            background-color: #ffffff;
-            color: #000000;
+
+        .final-phrase.visible {
+            display: block;
+            animation: fadeInSlow 4s ease forwards;
+        }
+
+        /* Animaciones */
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes fadeInSlow {
+            from { opacity: 0; }
+            to { opacity: 0.8; }
+        }
+
+        @keyframes fadeInMessage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+            .quote {
+                font-size: 1rem;
+            }
+            input {
+                font-size: 1rem;
+            }
+        }
+
+        /* Selección de texto dorada */
+        ::selection {
+            background: rgba(255, 215, 0, 0.3);
+            color: #FFFFFF;
+        }
+
+        /* Scrollbar minimalista */
+        ::-webkit-scrollbar {
+            width: 2px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>AIAMME.COM</h1>
-        <p class="tagline">The future has a new name.</p>
-        <a href="mailto:acquisition_aiamme@proton.me" class="button">Claim the name</a>
+        <!-- Frase inicial del manuscrito -->
+        <div class="quote">
+            Will is not a desire. It is the recognition of one's own nature and the execution of its potential.
+        </div>
+
+        <!-- Campo de input (dormido al inicio) -->
+        <div class="input-container" id="inputContainer">
+            <div class="input-label" id="inputLabel"></div>
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="" 
+                autocomplete="off"
+                spellcheck="false"
+            >
+        </div>
+
+        <!-- Cursor que parpadea -->
+        <div class="cursor" id="cursor"></div>
+
+        <!-- Área de conversación -->
+        <div class="conversation" id="conversation"></div>
+
+        <!-- Frase final -->
+        <div class="final-phrase" id="finalPhrase">
+            Before asking, notice who asks.
+        </div>
     </div>
+
+    <script>
+        // ============================================
+        // AIAMME - La página que no da respuestas
+        // Solo hace preguntas
+        // ============================================
+
+        const inputContainer = document.getElementById('inputContainer');
+        const inputLabel = document.getElementById('inputLabel');
+        const userInput = document.getElementById('userInput');
+        const cursor = document.getElementById('cursor');
+        const conversation = document.getElementById('conversation');
+        const finalPhrase = document.getElementById('finalPhrase');
+
+        // Estado inicial: la página está dormida
+        let isAwake = false;
+        let interactionCount = 0;
+
+        // Las respuestas de AIAMME (siempre preguntas, nunca respuestas)
+        const responses = [
+            "Fear is not your enemy. It is proof that what you are about to do matters. Tell me: what do you see in the data that others don't see?",
+            "If the auditor asked you why you classified the payments this way and not the other, what would you tell him?",
+            "Why do you think you need permission to say what you already know?",
+            "What stops you from trusting what you see?",
+            "And if you're not wrong?",
+            "Which terrifies you more: being wrong or being right?",
+            "What do you want to do with what you see?",
+            "Then don't look for what to do. Look for what to see. What you do will emerge from what you see.",
+            "What do they all have in common?",
+            "And what do you see that others don't?"
+        ];
+
+        // ============================================
+        // Despertar de la página
+        // ============================================
+
+        function wakeUp() {
+            if (isAwake) return;
+            isAwake = true;
+
+            // El cursor comienza a parpadear
+            cursor.classList.add('active');
+
+            // Después de 2 segundos, aparece la frase
+            setTimeout(() => {
+                typeText(inputLabel, "I'm here. How can I help you?", () => {
+                    // Después de que aparece la frase, el input se activa
+                    setTimeout(() => {
+                        inputContainer.classList.add('awake');
+                        userInput.focus();
+                    }, 1000);
+                });
+            }, 2000);
+        }
+
+        // ============================================
+        // Efecto de escritura
+        // ============================================
+
+        function typeText(element, text, callback) {
+            let index = 0;
+            element.innerHTML = '';
+            
+            const interval = setInterval(() => {
+                if (index < text.length) {
+                    element.innerHTML += text.charAt(index);
+                    index++;
+                } else {
+                    clearInterval(interval);
+                    if (callback) callback();
+                }
+            }, 50);
+        }
+
+        // ============================================
+        // Respuesta de AIAMME
+        // ============================================
+
+        function aiammeRespond(userMessage) {
+            // Crear mensaje del usuario
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.textContent = userMessage;
+            conversation.appendChild(userMsg);
+
+            // Limpiar input
+            userInput.value = '';
+
+            // Determinar respuesta
+            let response;
+            if (interactionCount === 0) {
+                // Primera interacción: siempre la misma
+                response = responses[0];
+            } else {
+                // Respuestas siguientes: cíclicas
+                response = responses[interactionCount % responses.length];
+            }
+
+            interactionCount++;
+
+            // Crear respuesta de AIAMME después de una pausa
+            setTimeout(() => {
+                const aiammeMsg = document.createElement('div');
+                aiammeMsg.className = 'message aiamme';
+                conversation.appendChild(aiammeMsg);
+                
+                typeText(aiammeMsg, response, () => {
+                    // Después de 3 interacciones, mostrar la frase final
+                    if (interactionCount >= 3) {
+                        setTimeout(() => {
+                            finalPhrase.classList.add('visible');
+                        }, 2000);
+                    }
+                });
+
+                // Scroll suave
+                conversation.scrollTop = conversation.scrollHeight;
+            }, 1500);
+
+            // Scroll suave
+            conversation.scrollTop = conversation.scrollHeight;
+        }
+
+        // ============================================
+        // Eventos
+        // ============================================
+
+        // Despertar después de que el usuario interactúa
+        let wakeUpTriggered = false;
+
+        function triggerWakeUp() {
+            if (!wakeUpTriggered) {
+                wakeUpTriggered = true;
+                wakeUp();
+            }
+        }
+
+        // Detectar cualquier actividad del usuario
+        document.addEventListener('mousemove', () => {
+            triggerWakeUp();
+        });
+
+        document.addEventListener('click', () => {
+            triggerWakeUp();
+        });
+
+        document.addEventListener('keydown', () => {
+            triggerWakeUp();
+        });
+
+        document.addEventListener('touchstart', () => {
+            triggerWakeUp();
+        });
+
+        // También despertar después de 7 segundos sin actividad
+        setTimeout(() => {
+            triggerWakeUp();
+        }, 7000);
+
+        // Manejar envío de mensaje
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && userInput.value.trim() !== '') {
+                aiammeRespond(userInput.value.trim());
+            }
+        });
+
+        // Prevenir copiar/pegar
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('paste', (e) => {
+            e.preventDefault();
+        });
+
+        // Prevenir inspección básica
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        // ============================================
+        // Log de acceso (como en el libro)
+        // ============================================
+
+        // Registrar la visita silenciosamente
+        const visitLog = {
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            screen: `${screen.width}x${screen.height}`,
+            referrer: document.referrer || 'direct'
+        };
+
+        // Enviar log (opcional - a implementar con backend)
+        // fetch('/log', { method: 'POST', body: JSON.stringify(visitLog) });
+
+        // ============================================
+        // Mensaje en consola para curiosos
+        // ============================================
+
+        console.log('%cAIAMME', 'color: #FFD700; font-size: 24px; font-family: Georgia, serif;');
+        console.log('%cBefore asking, notice who asks.', 'color: #FFFFFF; font-size: 14px; font-family: Georgia, serif; font-style: italic;');
+        console.log('%cThe page is asleep. Move your mouse. Or wait. It will find you.', 'color: #666666; font-size: 12px;');
+    </script>
 </body>
 </html>
