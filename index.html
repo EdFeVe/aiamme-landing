@@ -13,16 +13,20 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: #000000;
             color: #FFFFFF;
             font-family: 'Georgia', 'Times New Roman', serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-            overflow: hidden;
+            line-height: 1.8;
+            /* ELIMINADO: overflow: hidden */
+            /* ELIMINADO: display: flex */
+            /* ELIMINADO: min-height: 100vh */
+            /* ELIMINADO: justify-content: center */
+            /* ELIMINADO: align-items: center */
             position: relative;
         }
 
@@ -39,14 +43,22 @@
             z-index: 1;
         }
 
-        .container {
-            max-width: 700px;
+        /* ===== SECCIÓN 1: HERO (Pantalla inicial) ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             padding: 2rem;
             position: relative;
             z-index: 2;
         }
 
-        /* Párrafo inicial */
+        .hero-content {
+            max-width: 700px;
+        }
+
         .quote {
             font-size: 1.15rem;
             line-height: 2;
@@ -57,7 +69,6 @@
             letter-spacing: 0.02em;
         }
 
-        /* Campo de input - dormido inicialmente */
         .input-container {
             opacity: 0;
             transition: opacity 3s ease;
@@ -73,6 +84,7 @@
             margin-bottom: 1.5rem;
             opacity: 0.7;
             letter-spacing: 0.03em;
+            min-height: 1.5rem;
         }
 
         input {
@@ -98,7 +110,6 @@
             font-style: italic;
         }
 
-        /* Cursor que parpadea */
         .cursor {
             display: none;
             width: 2px;
@@ -113,11 +124,24 @@
             display: block;
         }
 
-        /* Área de conversación */
+        /* ===== SECCIÓN 2: CONVERSACIÓN ===== */
+        .conversation-section {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .conversation-container {
+            max-width: 700px;
+            width: 100%;
+        }
+
         .conversation {
-            margin-top: 2rem;
             text-align: left;
-            min-height: 200px;
         }
 
         .message {
@@ -140,19 +164,53 @@
             border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Frase final */
+        /* ===== SECCIÓN 3: FRASE FINAL ===== */
+        .final-section {
+            min-height: 50vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
         .final-phrase {
-            display: none;
-            margin-top: 3rem;
-            font-size: 1rem;
-            opacity: 0.5;
+            font-size: 1.5rem;
+            opacity: 0;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            line-height: 2;
         }
 
         .final-phrase.visible {
-            display: block;
             animation: fadeInSlow 4s ease forwards;
+        }
+
+        /* ===== INDICADOR DE SCROLL ===== */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .scroll-indicator.visible {
+            opacity: 1;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator.hidden {
+            opacity: 0;
         }
 
         /* Animaciones */
@@ -171,9 +229,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
         /* Responsive */
         @media (max-width: 600px) {
-            .container {
+            .hero-content {
                 padding: 1.5rem;
             }
             .quote {
@@ -181,6 +244,9 @@
             }
             input {
                 font-size: 1rem;
+            }
+            .final-phrase {
+                font-size: 1.2rem;
             }
         }
 
@@ -192,45 +258,60 @@
 
         /* Scrollbar minimalista */
         ::-webkit-scrollbar {
-            width: 2px;
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
             background: #000000;
         }
         ::-webkit-scrollbar-thumb {
             background: rgba(255, 215, 0, 0.3);
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 215, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Frase inicial del manuscrito -->
-        <div class="quote">
-            Will is not a desire. It is the recognition of one's own nature and the execution of its potential.
+    <!-- ===== SECCIÓN 1: HERO ===== -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="quote">
+                Will is not a desire. It is the recognition of one's own nature and the execution of its potential.
+            </div>
+
+            <div class="input-container" id="inputContainer">
+                <div class="input-label" id="inputLabel"></div>
+                <input 
+                    type="text" 
+                    id="userInput" 
+                    placeholder="" 
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+            </div>
+
+            <div class="cursor" id="cursor"></div>
         </div>
+    </section>
 
-        <!-- Campo de input (dormido al inicio) -->
-        <div class="input-container" id="inputContainer">
-            <div class="input-label" id="inputLabel"></div>
-            <input 
-                type="text" 
-                id="userInput" 
-                placeholder="" 
-                autocomplete="off"
-                spellcheck="false"
-            >
+    <!-- ===== SECCIÓN 2: CONVERSACIÓN ===== -->
+    <section class="conversation-section" id="conversationSection">
+        <div class="conversation-container">
+            <div class="conversation" id="conversation"></div>
         </div>
+    </section>
 
-        <!-- Cursor que parpadea -->
-        <div class="cursor" id="cursor"></div>
-
-        <!-- Área de conversación -->
-        <div class="conversation" id="conversation"></div>
-
-        <!-- Frase final -->
+    <!-- ===== SECCIÓN 3: FRASE FINAL ===== -->
+    <section class="final-section" id="finalSection">
         <div class="final-phrase" id="finalPhrase">
-            Before asking, notice who asks.
+            Before asking,<br>notice who asks.
         </div>
+    </section>
+
+    <!-- ===== INDICADOR DE SCROLL ===== -->
+    <div class="scroll-indicator" id="scrollIndicator">
+        Scroll ↓
     </div>
 
     <script>
@@ -245,12 +326,14 @@
         const cursor = document.getElementById('cursor');
         const conversation = document.getElementById('conversation');
         const finalPhrase = document.getElementById('finalPhrase');
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        const conversationSection = document.getElementById('conversationSection');
 
-        // Estado inicial: la página está dormida
+        // Estado inicial
         let isAwake = false;
         let interactionCount = 0;
 
-        // Las respuestas de AIAMME (siempre preguntas, nunca respuestas)
+        // Las respuestas de AIAMME (siempre preguntas)
         const responses = [
             "Fear is not your enemy. It is proof that what you are about to do matters. Tell me: what do you see in the data that others don't see?",
             "If the auditor asked you why you classified the payments this way and not the other, what would you tell him?",
@@ -282,6 +365,11 @@
                     setTimeout(() => {
                         inputContainer.classList.add('awake');
                         userInput.focus();
+                        
+                        // Mostrar indicador de scroll después de que el input está activo
+                        setTimeout(() => {
+                            scrollIndicator.classList.add('visible');
+                        }, 2000);
                     }, 1000);
                 });
             }, 2000);
@@ -311,6 +399,9 @@
         // ============================================
 
         function aiammeRespond(userMessage) {
+            // Ocultar indicador de scroll al primer mensaje
+            scrollIndicator.classList.add('hidden');
+
             // Crear mensaje del usuario
             const userMsg = document.createElement('div');
             userMsg.className = 'message user';
@@ -323,10 +414,8 @@
             // Determinar respuesta
             let response;
             if (interactionCount === 0) {
-                // Primera interacción: siempre la misma
                 response = responses[0];
             } else {
-                // Respuestas siguientes: cíclicas
                 response = responses[interactionCount % responses.length];
             }
 
@@ -343,23 +432,29 @@
                     if (interactionCount >= 3) {
                         setTimeout(() => {
                             finalPhrase.classList.add('visible');
+                            
+                            // Scroll suave a la frase final
+                            setTimeout(() => {
+                                document.getElementById('finalSection').scrollIntoView({ 
+                                    behavior: 'smooth' 
+                                });
+                            }, 1000);
                         }, 2000);
+                    } else {
+                        // Scroll suave a la conversación
+                        conversationSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
                     }
                 });
-
-                // Scroll suave
-                conversation.scrollTop = conversation.scrollHeight;
             }, 1500);
-
-            // Scroll suave
-            conversation.scrollTop = conversation.scrollHeight;
         }
 
         // ============================================
         // Eventos
         // ============================================
 
-        // Despertar después de que el usuario interactúa
         let wakeUpTriggered = false;
 
         function triggerWakeUp() {
@@ -369,27 +464,14 @@
             }
         }
 
-        // Detectar cualquier actividad del usuario
-        document.addEventListener('mousemove', () => {
-            triggerWakeUp();
-        });
+        // Detectar actividad del usuario
+        document.addEventListener('mousemove', triggerWakeUp);
+        document.addEventListener('click', triggerWakeUp);
+        document.addEventListener('keydown', triggerWakeUp);
+        document.addEventListener('touchstart', triggerWakeUp);
 
-        document.addEventListener('click', () => {
-            triggerWakeUp();
-        });
-
-        document.addEventListener('keydown', () => {
-            triggerWakeUp();
-        });
-
-        document.addEventListener('touchstart', () => {
-            triggerWakeUp();
-        });
-
-        // También despertar después de 7 segundos sin actividad
-        setTimeout(() => {
-            triggerWakeUp();
-        }, 7000);
+        // Despertar después de 7 segundos sin actividad
+        setTimeout(triggerWakeUp, 7000);
 
         // Manejar envío de mensaje
         userInput.addEventListener('keypress', (e) => {
@@ -398,40 +480,21 @@
             }
         });
 
+        // Ocultar indicador de scroll cuando el usuario hace scroll
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                scrollIndicator.classList.add('hidden');
+            }
+        });
+
         // Prevenir copiar/pegar
-        document.addEventListener('copy', (e) => {
-            e.preventDefault();
-        });
-
-        document.addEventListener('paste', (e) => {
-            e.preventDefault();
-        });
-
-        // Prevenir inspección básica
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
+        document.addEventListener('copy', (e) => e.preventDefault());
+        document.addEventListener('paste', (e) => e.preventDefault());
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
 
         // ============================================
-        // Log de acceso (como en el libro)
+        // Mensaje en consola
         // ============================================
-
-        // Registrar la visita silenciosamente
-        const visitLog = {
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            language: navigator.language,
-            screen: `${screen.width}x${screen.height}`,
-            referrer: document.referrer || 'direct'
-        };
-
-        // Enviar log (opcional - a implementar con backend)
-        // fetch('/log', { method: 'POST', body: JSON.stringify(visitLog) });
-
-        // ============================================
-        // Mensaje en consola para curiosos
-        // ============================================
-
         console.log('%cAIAMME', 'color: #FFD700; font-size: 24px; font-family: Georgia, serif;');
         console.log('%cBefore asking, notice who asks.', 'color: #FFFFFF; font-size: 14px; font-family: Georgia, serif; font-style: italic;');
         console.log('%cThe page is asleep. Move your mouse. Or wait. It will find you.', 'color: #666666; font-size: 12px;');
